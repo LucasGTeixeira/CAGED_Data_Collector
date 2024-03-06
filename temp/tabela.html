@@ -1,0 +1,286 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="X-UA-Compatible" content="IE=7">
+<script src="https://bi.mte.gov.br/lib10/main.js"></script><style type="text/css">
+<!--
+body  {
+scrollbar-3dlight-color: #D9D6CA;
+scrollbar-highlight-color: #D9D6CA;
+scrollbar-face-color: #BAB19E;
+scrollbar-shadow-color: #7C725A;
+scrollbar-darkshadow-color: #7C725A;
+scrollbar-arrow-color: #7C725A;
+scrollbar-track-color: #D9D6CA;
+}
+// -->
+</style><script src="https://bi.mte.gov.br/lib10/mozEmuLarholm2.js"></script><script src="https://bi.mte.gov.br/lib10/infomenu.js"></script><script src="https://bi.mte.gov.br/lib10/util.js" type="text/javascript"></script><link type="text/css" href="https://bi.mte.gov.br/lib10/grafico.css" rel="stylesheet"><link type="text/css" href="https://bi.mte.gov.br/lib10/css/custom-theme/jquery-ui-1.8.15.custom.css" rel="stylesheet"><script src="https://bi.mte.gov.br/lib10/jquery-1.5.1.min.js" type="text/javascript"></script><script type="text/javascript" src="https://bi.mte.gov.br/lib10/jquery-ui-1.8.15.custom.min.js"></script><script src="https://bi.mte.gov.br/lib10/highcharts/js/highcharts.js" type="text/javascript"></script><script src="https://bi.mte.gov.br/lib10/highcharts/js/highcharts-more.js" type="text/javascript"></script><script src="https://bi.mte.gov.br/lib10/highcharts/js/modules/exporting.src.js" type="text/javascript"></script><script src="https://bi.mte.gov.br/lib10/grafico.js" type="text/javascript"></script><style>
+ .CCor1 {background-color: #FFFFFF}
+ .CCor2 {background-color: #fce9d1}
+</style><script language="JavaScript1.1">
+function getAbsoluteTop(htmlObject) {
+   var yPos = htmlObject.offsetTop;
+   var temp = htmlObject.offsetParent;
+   while (temp != null) {
+      yPos += temp.offsetTop;
+      temp = temp.offsetParent;
+   }
+   return yPos;
+}
+  function tc(este) {
+    if (este.bgColor == "#fcf9b1") {
+      este.bgColor=este.gc
+    } else {
+      este.gc = este.bgColor
+      este.bgColor="#fcf9b1"
+    }
+  }
+    function tff(tid) {
+          var c
+          c = ElementsById(tid)
+          for (var i=0; i < c.length;i++) {
+            if (c[i].className == "CCor2")
+              c[i].className = "CCor1"
+            else
+              c[i].className = "CCor2"
+            if (navigator.appName != 'Netscape') 
+              c[i].parentElement.style.cursor='default'
+          }
+    }
+    function tf(tid,este) {
+      if (navigator.appName == 'Netscape') {
+        setTimeout("tff('"+tid+"')",400)
+        if (este.src == "https://bi.mte.gov.br/imagens10/sel2.gif") {
+          este.src = "https://bi.mte.gov.br/imagens10/sel1.gif"
+        } else {
+          este.src = "https://bi.mte.gov.br/imagens10/sel2.gif"
+        }
+      } else {
+        document.all[tid].parentElement.style.cursor='wait'
+        setTimeout("tff('"+tid+"')",400)
+        if (document.all[tid].className == "CCor2")
+           este.src = "https://bi.mte.gov.br/imagens10/sel1.gif"
+        else
+           este.src = "https://bi.mte.gov.br/imagens10/sel2.gif"
+      }
+    }
+document.write('<LINK REL="stylesheet" HREF="https://bi.mte.gov.br/lib10/formatoie.css" TYPE="text/css">')
+var NR
+var newwindow
+   function interv() {
+      if (newwindow.closed != true) {
+          newwindow.location="https://bi.mte.gov.br/temp/consulta"+NR+".htm"
+   }
+}
+function fecha() {
+   if (newwindow != null) {
+      if (newwindow.closed != true) {
+         newwindow.close()
+      }
+   }
+}
+var Colunas = new Array("Salário Médio Adm.","Divide")
+var PodeExecutar = false
+var Local = self
+var ContZIndex = 1000
+var AlturaLinha = 17
+var LarguraMenu = 120
+var ArqGif = "https://bi.mte.gov.br/imagens10/tri.gif"
+var SetaInv = true
+var CorTitulo = "#7C725A"
+var CorQuadro = "#BAB19E"
+var CorCabec = "#D9D6CA"
+var CorTotal = "#F0EEDB"
+var CloseTimer = null
+var Tempo = 500
+var NivelRecurs = 0
+var PosMenuV = 1
+var PosMenuH = 195
+var DistanciaSombra = 4
+var MenuCalc = new Array("MENUCALC","",23,0,3)
+var MenuCalc_1 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/soma.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Soma","parent.botoes.submeteoperacao(1,'Soma')",0,1)
+var MenuCalc_2 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/subtracao.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subtração","parent.botoes.submeteoperacao(1,'Subtração')",0,1)
+var MenuCalc_3 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/multiplicacao.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiplicação","parent.botoes.submeteoperacao(this,'Multiplicação')",0,1)
+var MenuCalc_4 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/divisao.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Divisão","parent.botoes.submeteoperacao(this,'Divisão')",0,1)
+var MenuCalc_5 = new Array("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outras","",11,1,2)
+var MenuCalc_5_1 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/resto.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resto","parent.botoes.submeteoperacao(this,'Resto')",0,1)
+var MenuCalc_5_2 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/raiz.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Raiz","parent.botoes.submeteoperacao(this,'Raiz')",0,1)
+var MenuCalc_5_3 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/media.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Média","parent.botoes.submeteoperacao(this,'Média')",0,2)
+var MenuCalc_5_4 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/minimo.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mínimo","parent.botoes.submeteoperacao(this,'Mínimo')",0,2)
+var MenuCalc_5_5 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/maximo.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Máximo","parent.botoes.submeteoperacao(this,'Máximo')",0,2)
+var MenuCalc_5_6 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/intervalo.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Intervalo","parent.botoes.submeteoperacao(this,'Intervalo')",0,2)
+var MenuCalc_5_7 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/constante.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constante","parent.botoes.submeteoperacao(this,'Constante')",0,3)
+var MenuCalc_5_8  = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/randomica.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Randômica","parent.botoes.rand()",0,3)
+var MenuCalc_5_9 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/classifica.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Classificação","parent.botoes.classifica()",0,3)
+var MenuCalc_5_10 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/mediamovel.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Média móvel","parent.botoes.submeteoperacao(this,'Média móvel')",0,4)
+var MenuCalc_5_11 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/ajusta.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp; Ajuste","parent.botoes.window.open('https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/caged_estatistico_ag_tabelaopajusta.htm','Ajuste','HEIGHT=235,WIDTH=450,top=10,left=10').focus()",0,4)
+var MenuCalc_6 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/variacao.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Variação","parent.botoes.submeteoperacao(this,'Variação')",0,2)
+var MenuCalc_7 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/indice.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Índice","parent.botoes.submeteoperacao(this,'Índice')",0,2)
+var MenuCalc_8 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/acumulado.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Acumulado","parent.botoes.submeteoperacao(this,'Acumulado')",0,2)
+var MenuCalc_9 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/produto.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Produto","parent.botoes.submeteoperacao(this,'Produto')",0,2)
+var MenuCalc_10 = new Array("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Percentual","",2,2,1)
+var MenuCalc_10_1 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/percentual.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sobre total","parent.botoes.submeteoperacao(this,'%SobreTotal')",0,1)
+var MenuCalc_10_2 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/percentcol.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entre colunas","parent.botoes.submeteoperacao(this,'%EntreColunas')",0,1)
+var MenuCalc_11 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/arredondar.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arredondar","parent.botoes.submeteoperacao(this,'Arredondar')",0,3)
+var MenuCalc_12 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/truncar.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Truncar","parent.botoes.submeteoperacao(this,'Truncar')",0,3)
+var MenuCalc_13 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/absoluto.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Absoluto","parent.botoes.submeteoperacao(this,'Absoluto')",0,3)
+var MenuCalc_14 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/totalcol.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total","parent.botoes.submeteoperacao(this,'Total')",0,3)
+var MenuCalc_15 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/excluicol.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluir colunas","parent.botoes.submeteoperacao(this,'Excluir')",0,4)
+var MenuCalc_16 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/trocacol.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Trocar colunas","parent.botoes.submeteoperacao(this,'Trocar')",0,4)
+var MenuCalc_17 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/sellinhas.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp; Seleção linhas","parent.botoes.window.open('https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/caged_estatistico_ag_tabelaopsellinhas.htm','SelLinhas','HEIGHT=320,WIDTH=450,top=10,left=10').focus()",0,4)
+var MenuCalc_18 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/marcacao.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marcação","parent.botoes.window.open('https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/caged_estatistico_ag_tabelaopmarcacao.htm','Marcação','HEIGHT=255,WIDTH=490,top=10,left=10').focus()",0,5)
+var MenuCalc_19 = new Array("<img width=16 src='https://bi.mte.gov.br/imagens10/curvaabc.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curva ABC","parent.botoes.submeteoperacao(this,'CurvaABC')",0,5)
+var MenuCalc_20 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/opgrafico.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gráfico","parent.botoes.window.open('https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/caged_estatistico_ag_tabelaopgrafico.htm','Grafico','HEIGHT=220,WIDTH=350,top=10,left=10').focus()",0,5)
+var MenuCalc_21 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/decimais.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Decimais","parent.botoes.submeteoperacao(0,'Decimais')",0,5)
+var MenuCalc_22 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/cabecalho.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cabeçalho","parent.botoes.submeteoperacao(0,'Cabeçalho')",0,5)
+var MenuCalc_23 = new Array("<img width=15 src='https://bi.mte.gov.br/imagens10/relogio.gif' style='position: absolute;top:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Formatar Hora","parent.botoes.submeteoperacao(this,'FormataHHMMSS')",0,5)
+var TAM = new Array (MenuCalc[2])
+</script><link rel="stylesheet" href="https://bi.mte.gov.br/lib10/formatoie.css" type="text/css"></head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<body bgcolor="#F3F1E2" onload="PodeExecutar=true; document.all['Aguarde'].style.visibility = 'hidden' " marginheight="5" topmargin="5" marginwidth="5" leftmargin="5">
+<div border="1" id="reexec" style="width:150;background-color:#7C725A;visibility:hidden;position:absolute;top:0:;left:0">
+  <table border="2" width="100%" cellpadding="0" cellspacing="0"><tbody><tr><td>
+    <table border="0" width="100%" cellspacing="0">
+      <tbody><tr><td width="90%"><font color="#F0EEDB"><b>Reexecutar</b></font></td><td onclick="document.FORMTROCA.reset();document.getElementById('reexec').style.visibility='hidden'"><img src="https://bi.mte.gov.br/imagens10/selecnvis.gif" title="Cancelar"></td></tr>
+      <tr><td align="center" colspan="2" bgcolor="#F0EEDB">
+        <img src="https://bi.mte.gov.br/imagens10/executa.gif" widht="26" height="24" id="botaoreexecuta" style="" title="Reexecuta a consulta" onmouseover="javascript: parent.botoes.troca(this,'executau')" onmouseout="javascript: parent.botoes.troca(this,'executa')" onmousedown="javascript: parent.botoes.troca(this,'executad')" onmouseup="javascript: parent.tabela.submeteTroca()">      </td></tr>
+    </tbody></table></td></tr>
+  </tbody></table>
+</div>
+<div id="Aguarde" style="position: absolute; width: 300px; top: 150px; left: 533px; visibility: hidden;">
+<table border="1" cellspacing="0" width="100%" cellpadding="2" bordercolorlight="#7C725A" bordercolordark="#BAB19E" bgcolor="#FFFFFF">
+<tbody><tr bgcolor="#7C725A">
+<th class="Tit"><center><font color="#F0EEDB"><b>Atenção!</b></font></center></th>
+</tr>
+<tr>
+<td class="N8">Aguarde o carregamento completo da página!</td>
+</tr>
+</tbody></table>
+</div>
+<script language="JavaScript1.1">
+  document.all['Aguarde'].style.left = (screen.width / 2) - 150
+</script>
+<div id="TipLayer" style="position:absolute; visibility:hide;"></div>
+<script language="JavaScript" src="https://bi.mte.gov.br/lib10/style.js"></script>
+<script language="JavaScript1.1">
+<!--
+var width = "200";
+var border = "2";
+var offsetx = -3;
+var offsety = 20;
+var fcolor = "#F0EEDB"
+var capcolor = "#F0EEDB"
+var backcolor = "#7C725A"
+var textcolor = "#000000"
+Style[0][0] = "#F0EEDB"
+Style[0][2] = "#7C725A"
+Style[0][3] = "#F0EEDB"
+// -->
+</script>
+<script>FazMenu("MenuCalc",120)
+</script><div class="TAM8" id="MenuCalcc" style="visibility: hidden; position: absolute; left: 50px; background-color: rgb(124, 114, 90); top: 5px; z-index: 1; height: 421px; width: 120px;"><div onselectstart="return false" class="TAM8" id="MenuCalc_1" style="position: relative; top: 1px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 1000; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/soma.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Soma</div><div onselectstart="return false" class="TAM8" id="MenuCalc_2" style="position: relative; top: 1px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 999; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/subtracao.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subtração</div><div onselectstart="return false" class="TAM8" id="MenuCalc_3" style="position: relative; top: 1px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 998; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/multiplicacao.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiplicação</div><div onselectstart="return false" class="TAM8" id="MenuCalc_4" style="position: relative; top: 1px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 997; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/divisao.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Divisão</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5" style="position: relative; top: 1px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 996; padding-top: 1px;"><div class="TAM8" id="MenuCalc_5c" style="visibility: hidden; position: absolute; left: 50px; background-color: rgb(124, 114, 90); top: 5px; z-index: 2; height: 216px; width: 120px;"><div onselectstart="return false" class="TAM8" id="MenuCalc_5_1" style="position: relative; top: 1px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 995; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/resto.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resto</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5_2" style="position: relative; top: 1px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 994; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/raiz.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Raiz</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5_3" style="position: relative; top: 2px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 993; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/media.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Média</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5_4" style="position: relative; top: 2px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 992; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/minimo.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mínimo</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5_5" style="position: relative; top: 2px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 991; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/maximo.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Máximo</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5_6" style="position: relative; top: 2px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 990; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/intervalo.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Intervalo</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5_7" style="position: relative; top: 3px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 989; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/constante.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constante</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5_8" style="position: relative; top: 3px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 988; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/randomica.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Randômica</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5_9" style="position: relative; top: 3px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 987; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/classifica.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Classificação</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5_10" style="position: relative; top: 4px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 986; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/mediamovel.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Média móvel</div><div onselectstart="return false" class="TAM8" id="MenuCalc_5_11" style="position: relative; top: 4px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 985; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/ajusta.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp; Ajuste</div><div class="TAM8" id="SombraCalc_5c" style="visibility: hidden; position: absolute; left: 4px; top: 4px; background-color: rgb(124, 114, 90); z-index: 0; height: 216px; width: 120px;"></div></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outras<img width="3" height="7" src="https://bi.mte.gov.br/imagens10/tri.gif" style="position: absolute; left: 110; top: 5"></div><div onselectstart="return false" class="TAM8" id="MenuCalc_6" style="position: relative; top: 2px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 984; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/variacao.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Variação</div><div onselectstart="return false" class="TAM8" id="MenuCalc_7" style="position: relative; top: 2px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 983; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/indice.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Índice</div><div onselectstart="return false" class="TAM8" id="MenuCalc_8" style="position: relative; top: 2px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 982; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/acumulado.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Acumulado</div><div onselectstart="return false" class="TAM8" id="MenuCalc_9" style="position: relative; top: 2px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 981; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/produto.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Produto</div><div onselectstart="return false" class="TAM8" id="MenuCalc_10" style="position: relative; top: 2px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 980; padding-top: 1px;"><div class="TAM8" id="MenuCalc_10c" style="visibility: hidden; position: absolute; left: 50px; background-color: rgb(124, 114, 90); top: 5px; z-index: 2; height: 62px; width: 120px;"><div onselectstart="return false" class="TAM8" id="MenuCalc_10_1" style="position: relative; top: 1px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 979; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/percentual.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sobre total</div><div onselectstart="return false" class="TAM8" id="MenuCalc_10_2" style="position: relative; top: 1px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 978; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/percentcol.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entre colunas</div><div class="TAM8" id="SombraCalc_10c" style="visibility: hidden; position: absolute; left: 4px; top: 4px; background-color: rgb(124, 114, 90); z-index: 0; height: 62px; width: 120px;"></div></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Percentual<img width="3" height="7" src="https://bi.mte.gov.br/imagens10/tri.gif" style="position: absolute; left: 110; top: 5"></div><div onselectstart="return false" class="TAM8" id="MenuCalc_11" style="position: relative; top: 3px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 977; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/arredondar.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arredondar</div><div onselectstart="return false" class="TAM8" id="MenuCalc_12" style="position: relative; top: 3px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 976; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/truncar.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Truncar</div><div onselectstart="return false" class="TAM8" id="MenuCalc_13" style="position: relative; top: 3px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 975; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/absoluto.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Absoluto</div><div onselectstart="return false" class="TAM8" id="MenuCalc_14" style="position: relative; top: 3px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 974; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/totalcol.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total</div><div onselectstart="return false" class="TAM8" id="MenuCalc_15" style="position: relative; top: 4px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 973; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/excluicol.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Excluir colunas</div><div onselectstart="return false" class="TAM8" id="MenuCalc_16" style="position: relative; top: 4px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 972; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/trocacol.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Trocar colunas</div><div onselectstart="return false" class="TAM8" id="MenuCalc_17" style="position: relative; top: 4px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 971; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/sellinhas.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp; Seleção linhas</div><div onselectstart="return false" class="TAM8" id="MenuCalc_18" style="position: relative; top: 5px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 970; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/marcacao.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marcação</div><div onselectstart="return false" class="TAM8" id="MenuCalc_19" style="position: relative; top: 5px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 969; padding-top: 1px;">&nbsp;<img width="16" src="https://bi.mte.gov.br/imagens10/curvaabc.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curva ABC</div><div onselectstart="return false" class="TAM8" id="MenuCalc_20" style="position: relative; top: 5px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 968; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/opgrafico.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gráfico</div><div onselectstart="return false" class="TAM8" id="MenuCalc_21" style="position: relative; top: 5px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 967; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/decimais.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Decimais</div><div onselectstart="return false" class="TAM8" id="MenuCalc_22" style="position: relative; top: 5px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 966; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/cabecalho.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cabeçalho</div><div onselectstart="return false" class="TAM8" id="MenuCalc_23" style="position: relative; top: 5px; left: 1px; cursor: pointer; background-color: rgb(217, 214, 202); width: 118px; height: 17px; z-index: 965; padding-top: 1px;">&nbsp;<img width="15" src="https://bi.mte.gov.br/imagens10/relogio.gif" style="position: absolute;top:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Formatar Hora</div><div class="TAM8" id="SombraCalcc" style="visibility: hidden; position: absolute; left: 4px; top: 4px; background-color: rgb(124, 114, 90); z-index: 0; height: 421px; width: 120px;"></div></div>
+<table id="dados" border="1" cellspacing="0" width="100%" cellpadding="2" bordercolorlight="#ffffff" bordercolordark="#D9D6CA" bgcolor="#ffffff">
+<colgroup><col>
+<col id="C1" style="color: 000000;">
+<col id="C2" style="color: 000000;">
+</colgroup>
+<tbody><tr bgcolor="#7C725A">
+<th class="Tit" align="LEFT" colspan="3"><font color="#F0EEDB">
+Perfil do Município
+
+</font></th></tr><tr id="PontoRef" valign="TOP" align="RIGHT" bgcolor="#D9D6CA"><th valign="BOTTOM" rowspan="2" width="40%" align="LEFT"><a href="javascript:parent.botoes.Proc(2,1)" onfocus="this.blur()"><img border="0" src="https://bi.mte.gov.br/imagens10/up.gif"></a>&nbsp;<a href="javascript:parent.botoes.Proc(3,1)" onfocus="this.blur()"><img border="0" src="https://bi.mte.gov.br/imagens10/down.gif"></a><br>CBO 2002</th><th rowspan="2" width="30%" align="RIGHT" valign="BOTTOM"><img src="https://bi.mte.gov.br/imagens10/sel1.gif" onclick="tf('C1',this)" title="Seleciona a coluna">&nbsp;<a href="javascript:parent.botoes.Proc(2,2)" onfocus="this.blur()"><img border="0" src="https://bi.mte.gov.br/imagens10/up.gif"></a>&nbsp;<a href="javascript:parent.botoes.Proc(3,2)" onfocus="this.blur()"><img border="0" src="https://bi.mte.gov.br/imagens10/down.gif"></a><br>Salário Médio Adm.</th><th rowspan="2" width="30%" align="RIGHT" valign="BOTTOM"><img src="https://bi.mte.gov.br/imagens10/sel1.gif" onclick="tf('C2',this)" title="Seleciona a coluna">&nbsp;<a href="javascript:parent.botoes.Proc(2,3)" onfocus="this.blur()"><img border="0" src="https://bi.mte.gov.br/imagens10/up.gif"></a>&nbsp;<a href="javascript:parent.botoes.Proc(3,3)" onfocus="this.blur()"><img border="0" src="https://bi.mte.gov.br/imagens10/down.gif"></a><br>Divide
+</th></tr><tr valign="TOP" align="RIGHT" bgcolor="#D9D6CA">
+</tr><tr valign="BOTTOM" align="RIGHT" gc="" onclick="tc(this)">
+<th align="LEFT">141615:Gerente de Logistica (Armazenagem e Distribuicao)</th><td class="col1">1</td><td class="col2">502,00</td>
+</tr><tr valign="BOTTOM" align="RIGHT" gc="" onclick="tc(this)">
+<th align="LEFT">421125:Operador de Caixa</th><td class="col1">1</td><td class="col2">502,00</td>
+</tr></tbody></table>
+<center><br><img id="logo" src="https://bi.mte.gov.br/imagens10/netunologocliente.gif">
+<form name="PLUS" action="https://bi.mte.gov.br/scripts10/netplus.cgi" method="POST" target="tabela">
+<input type="HIDDEN" name="FN" value="">
+<input type="HIDDEN" name="NO" value="">
+<input type="HIDDEN" name="JG" value="">
+<input type="HIDDEN" name="SH" value="">
+<input type="HIDDEN" name="LA" value="">
+<input type="HIDDEN" name="PT" value="">
+<input type="HIDDEN" name="SP" value="">
+<input type="HIDDEN" name="PS" value="">
+<input type="HIDDEN" name="PP" value="">
+<input type="HIDDEN" name="RR" value="">
+<input type="HIDDEN" name="NU" value="false;false;false">
+<input type="HIDDEN" name="CE" value="SOMA">
+<input type="HIDDEN" name="GN" value="">
+<input type="HIDDEN" name="SU" value="">
+<input type="HIDDEN" name="PQ" value="1">
+<input type="HIDDEN" name="IN" value="">
+<input type="HIDDEN" name="MH" value="">
+<input type="HIDDEN" name="KA" value="">
+<input type="HIDDEN" name="CV" value="">
+<input type="HIDDEN" name="SG" value="1">
+<input type="HIDDEN" name="SK" value="1">
+<input type="HIDDEN" name="AT" value="/u01/app/apache/html/temp/consulta97630511.csv">
+<input type="HIDDEN" name="ER" value="https://bi.mte.gov.br/temp/consulta97630511.csv">
+<input type="HIDDEN" name="AF" value="">
+<input type="HIDDEN" name="FS" value="1">
+<input type="HIDDEN" name="US" value="">
+</form>
+<form target="_top" name="FORMDEF" action="https://bi.mte.gov.br/scripts10/dardoweb.cgi" method="GET">
+<input type="HIDDEN" name="AP" value="">
+<input type="HIDDEN" name="NT" value="0">
+<input type="HIDDEN" name="AC" value="1">
+<input type="HIDDEN" name="GB" value="0">
+<input type="HIDDEN" name="DA" value="/u01/app/apache/html/bgcaged/caged_perfil_municipio/">
+<input type="HIDDEN" name="EA" value="https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/">
+<input type="HIDDEN" name="QP" value="">
+<input type="HIDDEN" name="IN" value="0">
+</form>
+<script>
+    if (parent.botoes.document.TOP != null)
+       parent.botoes.document.TOP.id= ''
+    if (parent.botoes.document.DI1 != null)
+       parent.botoes.document.DI1.id= ''
+    if (parent.botoes.document.DI2 != null)
+       parent.botoes.document.DI2.id= ''
+    if (parent.botoes.document.PE1 != null)
+       parent.botoes.document.PE1.id= ''
+    if (parent.botoes.document.PE2 != null)
+       parent.botoes.document.PE2.id= ''
+    if (parent.botoes.document.IMGCALC != null)
+       parent.botoes.document.IMGCALC.id= ''
+    if (parent.botoes.document.ROT != null)
+       parent.botoes.document.ROT.id= ''
+    if (parent.botoes.document.LDIMG != null)
+       parent.botoes.document.LDIMG.id= ''
+    if (parent.botoes.document.MAPA != null) 
+       parent.botoes.document.MAPA.id= ''
+    if (parent.botoes.document.DARDO != null)
+       parent.botoes.document.DARDO.id= ''
+    if (parent.botoes.document.EXCEL != null)
+       parent.botoes.document.EXCEL.id= ''
+    if (parent.botoes.document.Exibe != null)
+       parent.botoes.document.Exibe.id= 'INV'
+    if (parent.botoes.document.BOTGRAF != null)
+       parent.botoes.document.BOTGRAF.id= ''
+    if (parent.botoes.document.PRINT1 != null)
+       parent.botoes.document.PRINT1.id= ''
+    if (parent.botoes.document.all["botoesnaoimpressao"] != null)
+      parent.botoes.document.all["botoesnaoimpressao"].style.visibility = "visible"
+    if (parent.botoes.document.all["xgraf"] != null)
+      parent.botoes.document.all["xgraf"].className = "INV"
+    if (parent.botoes.document.all["xbotoes"] != null)
+      parent.botoes.document.all["xbotoes"].className = ""
+</script>
+
+
+</center></body></html>
