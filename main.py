@@ -11,22 +11,6 @@ import pandas as pd
 from utils.Constantes import YEARS, MONTHS
 import os
 
-# URL da página que você deseja acessar
-url = 'https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/index.php'
-
-# Caminho para o driver do Selenium (ajuste conforme necessário)
-driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux' #Para sistemas Linux
-# driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_windows.exe' #Para sistemas Windows
-
-# Cria um objeto Service para o ChromeDriver
-chrome_service = Service(driver_path)
-
-# Inicializa o navegador Chrome (você pode usar outro navegador também)
-driver = webdriver.Chrome(service=chrome_service)
-
-# Acessa a página
-driver.get(url)
-
 def collect_state_list(driver): 
     try:
         select_state = Select(driver.find_element(By.ID, 'uf'))
@@ -142,17 +126,23 @@ def add_month_data(table_url, state, city, year, month, city_df):
             cols = [col.text.strip() for col in cols]
             data.append(cols)
         columns = ['CBO 2002', 'Salário Médio Adm.', 'Admissão', 'Desligamento', 'Saldo']
-        df = pd.DataFrame(data, columns=columns)
-        df.to_csv(f'temp/df_consulta.csv', index=False)
-        df = pd.read_csv('temp/df_consulta.csv')
-        df.fillna(0, inplace=True)
-        df[['Admissão', 'Saldo', 'Desligamento']] = df[['Admissão', 'Saldo', 'Desligamento']].apply(lambda x: x.astype(int))
-        sum_admissao = df['Admissão'].sum()
-        sum_desligamento = df['Desligamento'].sum()
-        sum_saldo = df['Saldo'].sum()
-        city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, sum_admissao, sum_desligamento, sum_saldo]
-        print('Dados mensais coletados com sucesso!')
-        print('-------------------------')
+        if len(data[0]) == len(columns):
+            df = pd.DataFrame(data, columns=columns)
+            df.to_csv(f'temp/df_consulta.csv', index=False)
+            df = pd.read_csv('temp/df_consulta.csv')
+            df.fillna(0, inplace=True)
+            df[['Admissão', 'Saldo', 'Desligamento']] = df[['Admissão', 'Saldo', 'Desligamento']].apply(lambda x: x.astype(int))
+            sum_admissao = df['Admissão'].sum()
+            sum_desligamento = df['Desligamento'].sum()
+            sum_saldo = df['Saldo'].sum()
+            city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, sum_admissao, sum_desligamento, sum_saldo]
+            print('Dados mensais coletados com sucesso!')
+            print('-------------------------')
+        else:
+            print(f"A tabela coletada não possui a quantidade correta de colunas.")
+            print(f"Adicionando linha vazia")
+            print('-------------------------')
+            city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, 0, 0, 0]
         return city_df
 
 def is_this_year_valid(driver, year): 
@@ -230,4 +220,12 @@ def main():
         driver.quit()
 
 if __name__ == "__main__":
+    url = 'https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/index.php'
+
+    #driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux' #Para sistemas Linux
+    driver_path = 'C:\\Users\\Predify\\Documents\\GitHub\\CAGED_Data_Collector\\utils\\chromedriver_windows.exe' #Para sistemas Windows
+    
+    chrome_service = Service(driver_path)
+    driver = webdriver.Chrome(service=chrome_service)
+    driver.get(url)
     main()
