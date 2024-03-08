@@ -179,7 +179,7 @@ def save_city_data(state, city, city_df,year):
     city_df.to_csv(os.path.join(folder_path, extract_name), index=False)
     print(f"\n======================== \nArquivo {extract_name} salvo com sucesso.\n =================\n")
 
-def main():
+def main(driver, year):
     try:
         state_list = collect_state_list(driver)
         for state in state_list:
@@ -188,45 +188,51 @@ def main():
             for city in city_list:
                 select_state(driver, state)
                 select_city(driver, city)
-                for year in YEARS:
-                    columns = ['UF', 'Cod. Municipio','Nome Municipio', 'Ano', 'Mês', 'Admissao', 'Desligamento', 'Saldo']
-                    city_df = pd.DataFrame(columns=columns)
+                columns = ['UF', 'Cod. Municipio','Nome Municipio', 'Ano', 'Mês', 'Admissao', 'Desligamento', 'Saldo']
+                city_df = pd.DataFrame(columns=columns)
+                select_state(driver, state)
+                select_city(driver, city)
+                select_radio(driver)
+                time.sleep(1)
+                if not is_this_year_valid(driver, year):
+                    print(f"Não há dados para o ano {year} em {state} - {city}")
+                    print(f"Adicionando dados vazios para o ano {year} em {state} - {city}")
+                    add_empty_year(city_df, year, state, city)
+                    continue
+                else:
+                    print(f"\nHá dados para o ano {year} em {state} - {city}")
+                    print('Iniciando captura de dados...')
+                for month in MONTHS:
                     select_state(driver, state)
                     select_city(driver, city)
+                    time.sleep(1)
+                    print('\n-------------------------')
+                    print(f"Capturando dados de {state} - {city.split(':')[1]} no período de ({month}/{year})")
                     select_radio(driver)
                     time.sleep(1)
-                    if not is_this_year_valid(driver, year):
-                        print(f"Não há dados para o ano {year} em {state} - {city}")
-                        print(f"Adicionando dados vazios para o ano {year} em {state} - {city}")
-                        add_empty_year(city_df, year, state, city)
-                        continue
-                    else:
-                        print(f"\nHá dados para o ano {year} em {state} - {city}")
-                        print('Iniciando captura de dados...')
-                    for month in MONTHS:
-                        select_state(driver, state)
-                        select_city(driver, city)
-                        time.sleep(1)
-                        print('\n-------------------------')
-                        print(f"Capturando dados de {state} - {city.split(':')[1]} no período de ({month}/{year})")
-                        select_radio(driver)
-                        time.sleep(1)
-                        select_date(driver, year, month)
-                        execute_query(driver)
-                        time.sleep(1)
-                        table_url = get_table_url(driver)
-                        add_month_data(table_url, state, city, year, month, city_df)
-                    save_city_data(state, city, city_df, year)
+                    select_date(driver, year, month)
+                    execute_query(driver)
+                    time.sleep(1)
+                    table_url = get_table_url(driver)
+                    add_month_data(table_url, state, city, year, month, city_df)
+                save_city_data(state, city, city_df, year)
     finally:
         driver.quit()
 
 if __name__ == "__main__":
     url = 'https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/index.php'
 
-    #driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux' #Para sistemas Linux
-    driver_path = 'C:\\Users\\Predify\\Documents\\GitHub\\CAGED_Data_Collector\\utils\\chromedriver_windows.exe' #Para sistemas Windows
-    
-    chrome_service = Service(driver_path)
-    driver = webdriver.Chrome(service=chrome_service)
-    driver.get(url)
-    main()
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless') 
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+
+        for year in YEARS:
+            driver_path = f'C:\\Users\\Predify\\Documents\\GitHub\\CAGED_Data_Collector\\utils\\chromedriver_windows_{year}.exe' # Para sistemas Windows
+            chrome_service = Service(driver_path)
+            driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
+            driver.get(url)
+            futures.append(executor.submit(main, driver, year))
+        concurrent.futures.wait(futures)
+    driver.quit()
