@@ -80,8 +80,7 @@ def execute_query(driver):
         print(f"Erro ao clicar na imagem de execução: {e}")
 
 
-def get_table_url(driver, city, year): 
-    name_city = city.split(':')[1]
+def get_table_url(driver): 
     try:
         url_default = driver.current_url
         iframe = driver.find_element(By.NAME, 'iframe1')
@@ -101,7 +100,7 @@ def get_table_url(driver, city, year):
             html = driver.page_source
             pasta_temp = 'temp'
             os.makedirs(pasta_temp, exist_ok=True)     
-            with open(f'temp/tabela_{name_city}_{year}.html', 'w', encoding='utf-8') as file:
+            with open('temp/tabela.html', 'w', encoding='utf-8') as file:
                 file.write(html)
             time.sleep(2)
             driver.get(url_default)
@@ -120,7 +119,7 @@ def add_month_data(table_url, state, city, year, month, city_df):
         print('-------------------------')
         city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, 0, 0, 0]
     else:
-        with open(f'temp/tabela_{name_city}_{year}.html', 'r', encoding='utf-8') as file:
+        with open('temp/tabela.html', 'r', encoding='utf-8') as file:
             html = file.read()
         soup = BeautifulSoup(html, 'html.parser')
         table = soup.find('table', id='dados')
@@ -132,12 +131,10 @@ def add_month_data(table_url, state, city, year, month, city_df):
         columns = ['CBO 2002', 'Salário Médio Adm.', 'Admissão', 'Desligamento', 'Saldo']
         if len(data[0]) == len(columns):
             df = pd.DataFrame(data, columns=columns)
-            df.to_csv(f'temp/df_consulta_{name_city}_{year}.csv', index=False)
-            df = pd.read_csv(f'temp/df_consulta_{name_city}_{year}.csv')
+            df.to_csv(f'temp/df_consulta.csv', index=False)
+            df = pd.read_csv('temp/df_consulta.csv')
             df.fillna(0, inplace=True)
             df[['Admissão', 'Saldo', 'Desligamento']] = df[['Admissão', 'Saldo', 'Desligamento']].apply(lambda x: x.astype(int))
-            print(f"Dados coletados para {month}/{year}:")
-            print(df['Admissão'])
             sum_admissao = df['Admissão'].sum()
             sum_desligamento = df['Desligamento'].sum()
             sum_saldo = df['Saldo'].sum()
@@ -149,8 +146,6 @@ def add_month_data(table_url, state, city, year, month, city_df):
             print(f"Adicionando linha vazia")
             print('-------------------------')
             city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, 0, 0, 0]
-        os.remove(f'temp/df_consulta_{name_city}_{year}.csv')
-        os.remove(f'temp/tabela_{city}_{year}.html')
         return city_df
 
 def is_this_year_valid(driver, year): 
@@ -223,7 +218,7 @@ def main(driver, year):
                     select_date(driver, year, month)
                     execute_query(driver)
                     time.sleep(1)
-                    table_url = get_table_url(driver, city, year)
+                    table_url = get_table_url(driver)
                     add_month_data(table_url, state, city, year, month, city_df)
                 save_city_data(state, city, city_df, year)
     finally:
@@ -244,7 +239,6 @@ if __name__ == "__main__":
         futures = []
 
         for year in YEARS:
-            driver_path = f'/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux'
             chrome_service = Service(driver_path)
             driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
             driver.get(url)
