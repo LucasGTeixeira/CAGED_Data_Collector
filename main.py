@@ -172,7 +172,7 @@ def add_empty_year(city_df, year, state, city):
         name_city = city.split(':')[1]
         city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, 0, 0, 0]
     extract_name = f"{name_city}_{year}.csv"
-    folder_path = os.path.join('Dados Coletados', state, city) 
+    folder_path = os.path.join('Dados Coletados', state, name_city) 
     os.makedirs(folder_path, exist_ok=True)
     city_df.to_csv(os.path.join(folder_path, extract_name), index=False)
 
@@ -239,6 +239,7 @@ if __name__ == "__main__":
         futures = []
 
         for year in YEARS:
+            print('*************************\nIniciando captura de dados para o ano:', year)
             driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux'
             chrome_service = Service(driver_path)
             driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
