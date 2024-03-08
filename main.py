@@ -239,12 +239,11 @@ if __name__ == "__main__":
         futures = []
 
         for year in YEARS:
+            print('*************************\nIniciando captura de dados para o ano:', year)
+            driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux'
             chrome_service = Service(driver_path)
             driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
             driver.get(url)
-            try:
-                futures.append(executor.submit(main, driver, year))
-            except Exception as e:
-                print(f"Erro ao criar thread: {e}")
+            futures.append(executor.submit(main, driver, year))
         concurrent.futures.wait(futures)
     driver.quit()
