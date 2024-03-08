@@ -244,7 +244,7 @@ if __name__ == "__main__":
         futures = []
 
         for year in YEARS:
-            driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux'
+            driver_path = f'/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux'
             chrome_service = Service(driver_path)
             driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
             driver.get(url)
