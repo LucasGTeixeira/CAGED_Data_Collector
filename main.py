@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from utils.Constantes import YEARS, MONTHS
 import os
+import signal
+import sys
 import concurrent.futures
 
 def collect_state_list(driver): 
@@ -169,7 +171,10 @@ def add_empty_year(city_df, year, state, city):
         cod_city = city.split(':')[0]
         name_city = city.split(':')[1]
         city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, 0, 0, 0]
-    return city_df
+    extract_name = f"{name_city}_{year}.csv"
+    folder_path = os.path.join('Dados Coletados', state, city) 
+    os.makedirs(folder_path, exist_ok=True)
+    city_df.to_csv(os.path.join(folder_path, extract_name), index=False)
 
 def save_city_data(state, city, city_df,year):
     city = city.split(':')[1]
@@ -219,7 +224,12 @@ def main(driver, year):
     finally:
         driver.quit()
 
+def signal_handler(signal, frame):
+    print("Program stopped by user")
+    sys.exit(0)
+
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal_handler)
     url = 'https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/index.php'
 
     chrome_options = webdriver.ChromeOptions()
@@ -229,7 +239,7 @@ if __name__ == "__main__":
         futures = []
 
         for year in YEARS:
-            driver_path = f'C:\\Users\\Predify\\Documents\\GitHub\\CAGED_Data_Collector\\utils\\chromedriver_windows_{year}.exe' # Para sistemas Windows
+            driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux'
             chrome_service = Service(driver_path)
             driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
             driver.get(url)
