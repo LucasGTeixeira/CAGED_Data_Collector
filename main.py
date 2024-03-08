@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from utils.Constantes import YEARS, MONTHS
 import os
+import concurrent.futures
 
 def collect_state_list(driver): 
     try:
@@ -170,9 +171,9 @@ def add_empty_year(city_df, year, state, city):
         city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, 0, 0, 0]
     return city_df
 
-def save_city_data(state, city, city_df):
+def save_city_data(state, city, city_df,year):
     city = city.split(':')[1]
-    extract_name = f"{city}.csv"
+    extract_name = f"{city}_{year}.csv"
     folder_path = os.path.join('Dados Coletados', state, city) 
     os.makedirs(folder_path, exist_ok=True)
     city_df.to_csv(os.path.join(folder_path, extract_name), index=False)
@@ -186,10 +187,10 @@ def main():
             city_list = collect_city_list(driver)
             for city in city_list:
                 select_state(driver, state)
-                columns = ['UF', 'Cod. Municipio','Nome Municipio', 'Ano', 'Mês', 'Admissao', 'Desligamento', 'Saldo']
-                city_df = pd.DataFrame(columns=columns)
                 select_city(driver, city)
                 for year in YEARS:
+                    columns = ['UF', 'Cod. Municipio','Nome Municipio', 'Ano', 'Mês', 'Admissao', 'Desligamento', 'Saldo']
+                    city_df = pd.DataFrame(columns=columns)
                     select_state(driver, state)
                     select_city(driver, city)
                     select_radio(driver)
@@ -215,7 +216,7 @@ def main():
                         time.sleep(1)
                         table_url = get_table_url(driver)
                         add_month_data(table_url, state, city, year, month, city_df)
-                save_city_data(state, city, city_df)
+                    save_city_data(state, city, city_df, year)
     finally:
         driver.quit()
 
