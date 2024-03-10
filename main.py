@@ -80,7 +80,7 @@ def execute_query(driver):
         print(f"Erro ao clicar na imagem de execução: {e}")
 
 
-def get_table_url(driver): 
+def get_table_url(driver, year): 
     try:
         url_default = driver.current_url
         iframe = driver.find_element(By.NAME, 'iframe1')
@@ -100,7 +100,7 @@ def get_table_url(driver):
             html = driver.page_source
             pasta_temp = 'temp'
             os.makedirs(pasta_temp, exist_ok=True)     
-            with open('temp/tabela.html', 'w', encoding='utf-8') as file:
+            with open(f'temp/tabela_{year}.html', 'w', encoding='utf-8') as file:
                 file.write(html)
             time.sleep(2)
             driver.get(url_default)
@@ -119,7 +119,7 @@ def add_month_data(table_url, state, city, year, month, city_df):
         print('-------------------------')
         city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, 0, 0, 0]
     else:
-        with open('temp/tabela.html', 'r', encoding='utf-8') as file:
+        with open(f'temp/tabela_{year}.html', 'r', encoding='utf-8') as file:
             html = file.read()
         soup = BeautifulSoup(html, 'html.parser')
         table = soup.find('table', id='dados')
@@ -131,8 +131,8 @@ def add_month_data(table_url, state, city, year, month, city_df):
         columns = ['CBO 2002', 'Salário Médio Adm.', 'Admissão', 'Desligamento', 'Saldo']
         if len(data[0]) == len(columns):
             df = pd.DataFrame(data, columns=columns)
-            df.to_csv(f'temp/df_consulta.csv', index=False)
-            df = pd.read_csv('temp/df_consulta.csv')
+            df.to_csv(f'temp/df_consulta_{year}.csv', index=False)
+            df = pd.read_csv(f'temp/df_consulta_{year}.csv')
             df.fillna(0, inplace=True)
             df[['Admissão', 'Saldo', 'Desligamento']] = df[['Admissão', 'Saldo', 'Desligamento']].apply(lambda x: x.astype(int))
             sum_admissao = df['Admissão'].sum()
@@ -161,7 +161,7 @@ def is_this_year_valid(driver, year):
 
     execute_query(driver)
     time.sleep(1)
-    tabela_url = get_table_url(driver)
+    tabela_url = get_table_url(driver, year)
     if tabela_url is None:
         return False
     return True
@@ -191,12 +191,11 @@ def main(driver, year):
             select_state(driver, state)
             city_list = collect_city_list(driver)
             for city in city_list:
+                time.sleep(2)
                 select_state(driver, state)
                 select_city(driver, city)
                 columns = ['UF', 'Cod. Municipio','Nome Municipio', 'Ano', 'Mês', 'Admissao', 'Desligamento', 'Saldo']
                 city_df = pd.DataFrame(columns=columns)
-                select_state(driver, state)
-                select_city(driver, city)
                 select_radio(driver)
                 time.sleep(1)
                 if not is_this_year_valid(driver, year):
@@ -208,24 +207,23 @@ def main(driver, year):
                     print(f"\nHá dados para o ano {year} em {state} - {city}")
                     print('Iniciando captura de dados...')
                 for month in MONTHS:
-                    select_state(driver, state)
-                    select_city(driver, city)
-                    time.sleep(1)
                     print('\n-------------------------')
                     print(f"Capturando dados de {state} - {city.split(':')[1]} no período de ({month}/{year})")
+                    time.sleep(2)
+                    select_state(driver, state)
+                    select_city(driver, city)
                     select_radio(driver)
-                    time.sleep(1)
                     select_date(driver, year, month)
                     execute_query(driver)
                     time.sleep(1)
-                    table_url = get_table_url(driver)
+                    table_url = get_table_url(driver, year)
                     add_month_data(table_url, state, city, year, month, city_df)
                 save_city_data(state, city, city_df, year)
     finally:
         driver.quit()
 
 def signal_handler(signal, frame):
-    print("Program stopped by user")
+    print("Execussão encerrada")
     sys.exit(0)
 
 if __name__ == "__main__":
@@ -247,3 +245,19 @@ if __name__ == "__main__":
             futures.append(executor.submit(main, driver, year))
         concurrent.futures.wait(futures)
     driver.quit()
+
+# Testando sem paralelismo
+# if __name__ == "__main__":
+#     signal.signal(signal.SIGINT, signal_handler)
+#     url = 'https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/index.php'
+
+#     chrome_options = webdriver.ChromeOptions()
+#     chrome_options.add_argument('--headless') 
+
+#     for year in YEARS:
+#         print('*************************\nIniciando captura de dados para o ano:', year)
+#         driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux'
+#         chrome_service = Service(driver_path)
+#         driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
+#         driver.get(url)
+#         main(driver, year)
