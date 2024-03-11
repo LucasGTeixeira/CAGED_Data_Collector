@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from utils.Constantes import YEARS, MONTHS, WINDOWS_PATH, CITY, STATE, LINUX_PATH, URL
 import os
+import time
 import concurrent.futures
 
 def select_state(driver, state): 
@@ -89,7 +90,11 @@ def get_table_url(driver):
     except Exception as e:
         print(f"Erro ao encontrar ou trocar para o iframe: {e}")
 
-
+def safe_split(x):
+    try:
+        return x.split(':')
+    except Exception:
+        return None, None
 
 def add_month_data(table_url, state, city, year, month, city_df):
     cod_city = city.split(':')[0]
@@ -112,8 +117,10 @@ def add_month_data(table_url, state, city, year, month, city_df):
             df.to_csv(f'temp/df_consulta.csv', index=False)
             df = pd.read_csv('temp/df_consulta.csv')
             df.fillna(0, inplace=True)
-            df['Cod. CBO'] = df['CBO 2002'].apply(lambda x: x.split(':')[0])
-            df['Desc. CBO'] = df['CBO 2002'].apply(lambda x: x.split(':')[1])
+            try:
+                df['Cod. CBO'], df['Desc. CBO'] = zip(*df['CBO 2002'].apply(safe_split))
+            except Exception as e:
+                print(f"Erro ao processar CBO: {e}")
             df['UF'] = state
             df['Cod. Municipio'] = cod_city
             df['Nome Municipio'] = name_city
@@ -167,6 +174,7 @@ def main():
         city_df = pd.DataFrame(columns=columns)
         for year in YEARS:
             select_state(driver, STATE)
+            time.sleep(1)
             select_city(driver, CITY)
             select_radio(driver)
             time.sleep(1)
@@ -178,6 +186,7 @@ def main():
                 print('Iniciando captura de dados...')
             for month in MONTHS:
                 select_state(driver, STATE)
+                time.sleep(1)
                 select_city(driver, CITY)
                 print('\n-------------------------')
                 print(f"Capturando dados de {STATE} - {CITY.split(':')[1]} no período de ({month}/{year})")
@@ -200,4 +209,9 @@ if __name__ == "__main__":
     options.add_argument("--headless")
     driver = webdriver.Chrome(service=chrome_service, options=options)
     driver.get(URL)
+    start_time = time.time()
     main()
+    end_time = time.time() 
+    elapsed_time = end_time - start_time
+    elapsed_time_minutes = elapsed_time / 60 
+    print(f"Tempo de execução: {elapsed_time_minutes:.2f} minutos")
