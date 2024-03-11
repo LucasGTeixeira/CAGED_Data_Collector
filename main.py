@@ -8,7 +8,7 @@ import time
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from bs4 import BeautifulSoup
 import pandas as pd
-from utils.Constantes import YEARS, MONTHS, WINDOWS_PATH, CITY, STATE
+from utils.Constantes import YEARS, MONTHS, WINDOWS_PATH, CITY, STATE, LINUX_PATH, URL
 import os
 import concurrent.futures
 
@@ -72,7 +72,6 @@ def get_table_url(driver):
             tabela_frame = driver.find_element(By.NAME, 'tabela')
             tabela_url = tabela_frame.get_attribute('src')
         except NoSuchElementException:
-            print("Não há dados para essa data.")
             tabela_url = None
         driver.switch_to.default_content()
         assert driver.current_url == url_default, "Não está no contexto padrão."
@@ -97,9 +96,6 @@ def add_month_data(table_url, state, city, year, month, city_df):
     name_city = city.split(':')[1]
     if table_url is None:
         print(f"Não há dados para este mês")
-        print(f"Adicionando linha vazia")        
-        print('-------------------------')
-        city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, 0, 0, 0]
     else:
         with open('temp/tabela.html', 'r', encoding='utf-8') as file:
             html = file.read()
@@ -116,18 +112,25 @@ def add_month_data(table_url, state, city, year, month, city_df):
             df.to_csv(f'temp/df_consulta.csv', index=False)
             df = pd.read_csv('temp/df_consulta.csv')
             df.fillna(0, inplace=True)
-            df[['Admissão', 'Saldo', 'Desligamento']] = df[['Admissão', 'Saldo', 'Desligamento']].apply(lambda x: x.astype(int))
-            sum_admissao = df['Admissão'].sum()
-            sum_desligamento = df['Desligamento'].sum()
-            sum_saldo = df['Saldo'].sum()
-            city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, sum_admissao, sum_desligamento, sum_saldo]
+            df['Cod. CBO'] = df['CBO 2002'].apply(lambda x: x.split(':')[0])
+            df['Desc. CBO'] = df['CBO 2002'].apply(lambda x: x.split(':')[1])
+            df['UF'] = state
+            df['Cod. Municipio'] = cod_city
+            df['Nome Municipio'] = name_city
+            df['Ano'] = year
+            df['Mês'] = month
+            df.drop(columns=['CBO 2002'], inplace=True)
+            if city_df.empty:
+                columns = ['UF', 'Cod. Municipio', 'Nome Municipio', 'Ano', 'Mês',
+                        'Cod. CBO', 'Desc. CBO', 'Salário Médio Adm.',
+                        'Admissão', 'Desligamento', 'Saldo']
+                city_df = df[columns]
+            else:
+                city_df = pd.concat([city_df, df], ignore_index=True)
             print('Dados mensais coletados com sucesso!')
             print('-------------------------')
         else:
             print(f"A tabela coletada não possui a quantidade correta de colunas.")
-            print(f"Adicionando linha vazia")
-            print('-------------------------')
-            city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, 0, 0, 0]
         return city_df
 
 def is_this_year_valid(driver, year): 
@@ -148,21 +151,19 @@ def is_this_year_valid(driver, year):
         return False
     return True
 
-def save_city_data(state, city, city_df,year):
+def save_city_data(state, city, city_df):
     city = city.split(':')[1]
     extract_name = f"{city}.csv"
     folder_path = os.path.join('Dados Coletados', state, city) 
     os.makedirs(folder_path, exist_ok=True)
-    city_df.to_csv(os.path.join(folder_path, extract_name), index=False)
+    city_df.to_csv(os.path.join(folder_path, extract_name), index=False, sep=';')
     print(f"\n======================== \nArquivo {extract_name} salvo com sucesso.\n =================\n")
 
 def main():
     try:
-        select_state(driver, STATE)
-        select_city(driver, CITY)
         columns = ['UF', 'Cod. Municipio','Nome Municipio', 'Ano', 'Mês',
-                    'Cod CBO', 'Desc. CBO', 'Salario Medio Adm.',
-                    'Admissao', 'Desligamento', 'Saldo']
+            'Cod. CBO', 'Desc. CBO', 'Salário Médio Adm.',
+            'Admissão', 'Desligamento', 'Saldo']
         city_df = pd.DataFrame(columns=columns)
         for year in YEARS:
             select_state(driver, STATE)
@@ -171,7 +172,6 @@ def main():
             time.sleep(1)
             if not is_this_year_valid(driver, year):
                 print(f"Não há dados para o ano {year} em {STATE} - {CITY}")
-                print(f"Adicionando dados vazios para o ano {year} em {STATE} - {CITY}")
                 continue
             else:
                 print(f"\nHá dados para o ano {year} em {STATE} - {CITY}")
@@ -187,15 +187,17 @@ def main():
                 execute_query(driver)
                 time.sleep(1)
                 table_url = get_table_url(driver)
-                add_month_data(table_url, STATE, CITY, year, month, city_df)
-        save_city_data(STATE, CITY, city_df)
+                city_df = add_month_data(table_url, STATE, CITY, year, month, city_df)
     finally:
         driver.quit()
+        save_city_data(STATE, CITY, city_df)
 
 if __name__ == "__main__":
-    url = 'https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/index.php'
-    driver_path = WINDOWS_PATH
+    print(f"Iniciando coleta de dados para {STATE} - {CITY.split(':')[1]}")
+    driver_path = LINUX_PATH
     chrome_service = Service(driver_path)
-    driver = webdriver.Chrome(service=chrome_service)
-    driver.get(url)
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    driver = webdriver.Chrome(service=chrome_service, options=options)
+    driver.get(URL)
     main()
