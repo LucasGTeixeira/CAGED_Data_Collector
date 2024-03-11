@@ -8,25 +8,9 @@ import time
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from bs4 import BeautifulSoup
 import pandas as pd
-from utils.Constantes import YEARS, MONTHS
+from utils.Constantes import YEARS, MONTHS, WINDOWS_PATH, CITY, STATE
 import os
 import concurrent.futures
-
-def collect_state_list(driver): 
-    try:
-        select_state = Select(driver.find_element(By.ID, 'uf'))
-        states = [option.text for option in select_state.options[1:]]
-        return states
-    except Exception as e:
-        print(f"Erro ao coletar Estados: {e}")
-
-def collect_city_list(driver): 
-    try:
-        select_city = Select(driver.find_element(By.ID, 'mun'))
-        cities = [option.text for option in select_city.options[1:]]
-        return cities
-    except Exception as e:
-        print(f"Erro ao coletar Municípios: {e}")
 
 def select_state(driver, state): 
     try:
@@ -164,16 +148,9 @@ def is_this_year_valid(driver, year):
         return False
     return True
 
-def add_empty_year(city_df, year, state, city):
-    for month in MONTHS:
-        cod_city = city.split(':')[0]
-        name_city = city.split(':')[1]
-        city_df.loc[len(city_df)] = [state, cod_city, name_city, year, month, 0, 0, 0]
-    return city_df
-
 def save_city_data(state, city, city_df,year):
     city = city.split(':')[1]
-    extract_name = f"{city}_{year}.csv"
+    extract_name = f"{city}.csv"
     folder_path = os.path.join('Dados Coletados', state, city) 
     os.makedirs(folder_path, exist_ok=True)
     city_df.to_csv(os.path.join(folder_path, extract_name), index=False)
@@ -181,51 +158,43 @@ def save_city_data(state, city, city_df,year):
 
 def main():
     try:
-        state_list = collect_state_list(driver)
-        for state in state_list:
-            select_state(driver, state)
-            city_list = collect_city_list(driver)
-            for city in city_list:
-                select_state(driver, state)
-                select_city(driver, city)
-                for year in YEARS:
-                    columns = ['UF', 'Cod. Municipio','Nome Municipio', 'Ano', 'Mês', 'Admissao', 'Desligamento', 'Saldo']
-                    city_df = pd.DataFrame(columns=columns)
-                    select_state(driver, state)
-                    select_city(driver, city)
-                    select_radio(driver)
-                    time.sleep(1)
-                    if not is_this_year_valid(driver, year):
-                        print(f"Não há dados para o ano {year} em {state} - {city}")
-                        print(f"Adicionando dados vazios para o ano {year} em {state} - {city}")
-                        add_empty_year(city_df, year, state, city)
-                        continue
-                    else:
-                        print(f"\nHá dados para o ano {year} em {state} - {city}")
-                        print('Iniciando captura de dados...')
-                    for month in MONTHS:
-                        select_state(driver, state)
-                        select_city(driver, city)
-                        time.sleep(1)
-                        print('\n-------------------------')
-                        print(f"Capturando dados de {state} - {city.split(':')[1]} no período de ({month}/{year})")
-                        select_radio(driver)
-                        time.sleep(1)
-                        select_date(driver, year, month)
-                        execute_query(driver)
-                        time.sleep(1)
-                        table_url = get_table_url(driver)
-                        add_month_data(table_url, state, city, year, month, city_df)
-                    save_city_data(state, city, city_df, year)
+        select_state(driver, STATE)
+        select_city(driver, CITY)
+        columns = ['UF', 'Cod. Municipio','Nome Municipio', 'Ano', 'Mês',
+                    'Cod CBO', 'Desc. CBO', 'Salario Medio Adm.',
+                    'Admissao', 'Desligamento', 'Saldo']
+        city_df = pd.DataFrame(columns=columns)
+        for year in YEARS:
+            select_state(driver, STATE)
+            select_city(driver, CITY)
+            select_radio(driver)
+            time.sleep(1)
+            if not is_this_year_valid(driver, year):
+                print(f"Não há dados para o ano {year} em {STATE} - {CITY}")
+                print(f"Adicionando dados vazios para o ano {year} em {STATE} - {CITY}")
+                continue
+            else:
+                print(f"\nHá dados para o ano {year} em {STATE} - {CITY}")
+                print('Iniciando captura de dados...')
+            for month in MONTHS:
+                select_state(driver, STATE)
+                select_city(driver, CITY)
+                print('\n-------------------------')
+                print(f"Capturando dados de {STATE} - {CITY.split(':')[1]} no período de ({month}/{year})")
+                select_radio(driver)
+                time.sleep(1)
+                select_date(driver, year, month)
+                execute_query(driver)
+                time.sleep(1)
+                table_url = get_table_url(driver)
+                add_month_data(table_url, STATE, CITY, year, month, city_df)
+        save_city_data(STATE, CITY, city_df)
     finally:
         driver.quit()
 
 if __name__ == "__main__":
     url = 'https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/index.php'
-
-    #driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux' #Para sistemas Linux
-    driver_path = 'C:\\Users\\Predify\\Documents\\GitHub\\CAGED_Data_Collector\\utils\\chromedriver_windows.exe' #Para sistemas Windows
-    
+    driver_path = WINDOWS_PATH
     chrome_service = Service(driver_path)
     driver = webdriver.Chrome(service=chrome_service)
     driver.get(url)
