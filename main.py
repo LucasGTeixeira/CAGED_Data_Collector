@@ -8,7 +8,7 @@ import time
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from bs4 import BeautifulSoup
 import pandas as pd
-from utils.Constantes import YEARS, MONTHS
+from utils.Constantes import YEARS, MONTHS, LINUX_DRIVER, URL, WINDOWS_DRIVER
 import os
 import signal
 import sys
@@ -191,8 +191,8 @@ def main(driver, year):
             select_state(driver, state)
             city_list = collect_city_list(driver)
             for city in city_list:
-                time.sleep(2)
                 select_state(driver, state)
+                time.sleep(1)
                 select_city(driver, city)
                 columns = ['UF', 'Cod. Municipio','Nome Municipio', 'Ano', 'Mês', 'Admissao', 'Desligamento', 'Saldo']
                 city_df = pd.DataFrame(columns=columns)
@@ -209,8 +209,8 @@ def main(driver, year):
                 for month in MONTHS:
                     print('\n-------------------------')
                     print(f"Capturando dados de {state} - {city.split(':')[1]} no período de ({month}/{year})")
-                    time.sleep(2)
                     select_state(driver, state)
+                    time.sleep(1)
                     select_city(driver, city)
                     select_radio(driver)
                     select_date(driver, year, month)
@@ -228,7 +228,7 @@ def signal_handler(signal, frame):
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
-    url = 'https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/index.php'
+    url = URL
 
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--headless') 
@@ -238,26 +238,10 @@ if __name__ == "__main__":
 
         for year in YEARS:
             print('*************************\nIniciando captura de dados para o ano:', year)
-            driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux'
+            driver_path = LINUX_DRIVER
             chrome_service = Service(driver_path)
             driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
             driver.get(url)
             futures.append(executor.submit(main, driver, year))
         concurrent.futures.wait(futures)
     driver.quit()
-
-# Testando sem paralelismo
-# if __name__ == "__main__":
-#     signal.signal(signal.SIGINT, signal_handler)
-#     url = 'https://bi.mte.gov.br/bgcaged/caged_perfil_municipio/index.php'
-
-#     chrome_options = webdriver.ChromeOptions()
-#     chrome_options.add_argument('--headless') 
-
-#     for year in YEARS:
-#         print('*************************\nIniciando captura de dados para o ano:', year)
-#         driver_path = '/media/lucas/HD 1TB/Dados_CAGED/utils/chromedriver_linux'
-#         chrome_service = Service(driver_path)
-#         driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
-#         driver.get(url)
-#         main(driver, year)
